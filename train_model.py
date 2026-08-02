@@ -4,6 +4,10 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 #For TF-IDF vectorization of text data(Converting text into numerical features)
 from sklearn.feature_extraction.text import TfidfVectorizer
+#For training the logistic regression model
+from sklearn.linear_model import LogisticRegression
+#For evaluating the model performance
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 
 #Load the dataset
 df = pd.read_csv("Twitter_Data.csv")
@@ -64,3 +68,50 @@ X_test_tfidf = tfidf.transform(X_test)
 print("\nTF-IDF conversion completed.")
 print("Training feature shape:", X_train_tfidf.shape)
 print("Testing feature shape:", X_test_tfidf.shape)
+
+#Step 3: Logistic regression model training
+logistic_model = LogisticRegression(
+    #perform up to 1000 iterations to find a suitable solution(if value too small, may cause model stop before fully finish learning process)
+    max_iter=1000,
+    random_state=42
+)
+
+#Train model using TF-IDF training data
+print("\nTraining the logistic regression model...")
+
+#model get numerical TF-IDF features and correct sentiment labels
+logistic_model.fit(X_train_tfidf, y_train)
+
+print("Logistic regression training completed.")
+
+#Step 4: Model evaluation
+#Predict sentiment labels for the testing data 
+y_pred = logistic_model.predict(X_test_tfidf)
+
+#Calculate overall accuracy 
+accuracy = accuracy_score(y_test, y_pred)
+
+print("\nLogistic Regression Model Evaluation")
+print("Accuracy:", accuracy)
+
+#Display precision, recall, F1-score for each sentiment class
+print("\nClassification Report:")
+print(
+    classification_report(
+        y_test,
+        y_pred,
+        labels=[-1, 0, 1],
+        target_names=["Negative", "Neutral", "Positive"],
+        digits=4
+    )
+)
+
+#Display confusion matrix to show how many records were correctly or incorrectly classified for each sentiment class
+print("\nConfusion Matrix:")
+print(
+    confusion_matrix(
+        y_test,
+        y_pred,
+        labels=[-1, 0, 1]
+    )
+)
