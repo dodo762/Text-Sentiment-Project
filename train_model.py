@@ -2,6 +2,8 @@
 import pandas as pd
 #Import train-test split(divide into training and testing data)
 from sklearn.model_selection import train_test_split
+#For TF-IDF vectorization of text data(Converting text into numerical features)
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 #Load the dataset
 df = pd.read_csv("Twitter_Data.csv")
@@ -40,3 +42,25 @@ print(y_train.value_counts())
 
 print("\nTesting label distribution:")
 print(y_test.value_counts())
+
+tfidf = TfidfVectorizer(
+    #Limit the number of features to 50,000 most important words
+    max_features=50000,
+    #Consider both single words and pairs of consecutive words(1-grams and 2-grams)Exp: happy, not happy
+    ngram_range=(1, 2),
+    #Ignore words that appear in less than 2 documents
+    min_df=2,
+    #Ignore words that appear in more than 95% of the documents
+    max_df=0.95
+)
+
+#Learn vocabulary and word importancefrom the training text and convert training text into numbers
+X_train_tfidf = tfidf.fit_transform(X_train)
+
+#Convert testing text using the same learned vocabulary(convert training sentences into numerical vectors)
+#Not use fit_transform() on testing data because it will learn new vocabulary from testing data which is not present in training data
+X_test_tfidf = tfidf.transform(X_test)
+
+print("\nTF-IDF conversion completed.")
+print("Training feature shape:", X_train_tfidf.shape)
+print("Testing feature shape:", X_test_tfidf.shape)
