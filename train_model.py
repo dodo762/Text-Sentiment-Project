@@ -14,6 +14,8 @@ from sklearn.svm import LinearSVC
 from sklearn.naive_bayes import MultinomialNB
 #For model comparison
 from sklearn.metrics import precision_recall_fscore_support
+#For calibrating the predicted probabilities of the models(convert SVM decision scores into probability estimates)
+from sklearn.calibration import CalibratedClassifierCV
 
 #Load the dataset
 df = pd.read_csv("Twitter_Data.csv")
@@ -291,3 +293,69 @@ display_results[metric_columns] = (
 ).round(2)
 
 print(display_results.to_string(index=False))
+
+#Step 7.1: Linear SVM confidence score  
+#Create a calibrated Linear SVM model 
+calibrated_svm_model = CalibratedClassifierCV(
+    #Use the previously trained linear SVM model as the base estimator
+    estimator=LinearSVC(random_state=42),
+    #Use sigmoid function to convert decision scores into probability estimates
+    method="sigmoid",
+    #Use 3-fold cross-validation to calibrate the model
+    cv=3,
+    #Allow to use all available CPU cores
+    n_jobs=-1
+)
+
+print("\nTraining the calibrated linear SVM model...")
+
+calibrated_svm_model.fit(X_train_tfidf, y_train)
+
+print("Calibrated linear SVM training completed.")
+
+#Evaluate calibrated linear SVM model on testing data
+#Predict sentiment classes
+calibrated_svm_pred = calibrated_svm_model.predict(X_test_tfidf)
+
+#Predict class probabilities 
+calibrated_svm_probabilities = calibrated_svm_model.predict_proba(X_test_tfidf)
+
+#Calculate accuracy
+calibrated_svm_accuracy = accuracy_score(
+    y_test, 
+    calibrated_svm_pred
+)
+
+print("\nCalibrated Linear SVM Model Evaluation")
+print("Accuracy:", calibrated_svm_accuracy)
+
+print("\nClassification Report:")
+print(
+    classification_report(
+        y_test,
+        calibrated_svm_pred,
+        labels=[-1, 0, 1],
+        target_names=["Negative", "Neutral", "Positive"],
+        digits=4
+    )
+)
+
+print("\nConfusion Matrix:")
+print(
+    confusion_matrix(
+        y_test,
+        calibrated_svm_pred,
+        labels=[-1, 0, 1]
+    )
+)
+
+#Check probability output 
+print("\nClass order:")
+print(calibrated_svm_model.classes_)
+
+print("\nProbability example:")
+print(calibrated_svm_probabilities[0])
+
+print("\nProbability total:")
+print(calibrated_svm_probabilities[0].sum())
+
