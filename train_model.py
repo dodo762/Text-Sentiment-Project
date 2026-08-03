@@ -10,6 +10,10 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 #For training the linear SVM model
 from sklearn.svm import LinearSVC
+#For training the Naive Bayes model
+from sklearn.naive_bayes import MultinomialNB
+#For model comparison
+from sklearn.metrics import precision_recall_fscore_support
 
 #Load the dataset
 df = pd.read_csv("Twitter_Data.csv")
@@ -160,3 +164,130 @@ print(
         labels=[-1, 0, 1]
     )
 )
+
+#Step 6: Naive Bayes model training
+#Create multinomial Naive Bayes model
+nb_model = MultinomialNB()
+
+print("\nTraining the MultinomialNaive Bayes model...")
+
+nb_model.fit(X_train_tfidf, y_train)
+
+print("Multinomial Naive Bayes training completed.")
+
+#Predict testing data
+nb_pred = nb_model.predict(X_test_tfidf)
+
+#Calculate accuracy
+nb_accuracy = accuracy_score(y_test, nb_pred)
+
+print("\nMultinomial Naive Bayes Model Evaluation")
+print("Accuracy:", nb_accuracy)
+
+#Display classification report
+print("\nClassification Report:")
+print(
+    classification_report(
+        y_test,
+        nb_pred,
+        labels=[-1, 0, 1],
+        target_names=["Negative", "Neutral", "Positive"],
+        digits=4
+    )
+)
+
+#Display confusion matrix
+print("\nConfusion Matrix:")
+print(
+    confusion_matrix(
+        y_test,
+        nb_pred,
+        labels=[-1, 0, 1]
+    )
+)
+
+#Step 7: Model comparison
+#Calculate macro-average results for Logistic Regression 
+logistic_precision, logistic_recall, logistic_f1, _ = (
+    precision_recall_fscore_support(
+        y_test,
+        y_pred,
+        average="macro",
+        zero_division=0
+    )
+)
+
+#Calculate macro-average results for Linear SVM
+svm_precision, svm_recall, svm_f1, _ = (
+    precision_recall_fscore_support(
+        y_test,
+        svm_pred,
+        average="macro",
+        zero_division=0
+    )
+)
+
+#Calculate macro-average results for Multinomial Naive Bayes
+nb_precision, nb_recall, nb_f1, _ = (
+    precision_recall_fscore_support(
+        y_test,
+        nb_pred,
+        average="macro",
+        zero_division=0
+    )
+)
+
+#Create comparison table to show 
+model_results = pd.DataFrame(
+    {
+        "Model":[
+            "Logistic Regression",
+            "Linear SVM",
+            "Multinomial Naive Bayes"
+        ],
+        "Accuracy":[
+            accuracy,
+            svm_accuracy,
+            nb_accuracy
+        ],
+        "Macro Precision":[
+            logistic_precision,
+            svm_precision,
+            nb_precision
+        ],
+        "Macro Recall":[
+            logistic_recall,
+            svm_recall,
+            nb_recall
+        ],
+        "Macro F1-score":[
+            logistic_f1,
+            svm_f1,
+            nb_f1
+        ]
+    }
+)
+
+#Sort comparison table from best to worst 
+model_results = model_results.sort_values(
+    by="Macro F1-score",
+    ascending=False
+).reset_index(drop=True)
+
+#Display comparison table 
+print("\nModel Comparison:")
+
+display_results = model_results.copy() 
+
+metric_columns = [
+    "Accuracy",
+    "Macro Precision",
+    "Macro Recall",
+    "Macro F1-score"
+]
+
+display_results[metric_columns] = (
+    display_results[metric_columns] * 100
+).round(2)
+
+print(display_results.to_string(index=False))
