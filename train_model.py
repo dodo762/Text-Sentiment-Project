@@ -359,3 +359,69 @@ print(calibrated_svm_probabilities[0])
 print("\nProbability total:")
 print(calibrated_svm_probabilities[0].sum())
 
+#Step 8: Test manual input text on the trained models
+def predict_sentiment(text):
+    #Convert the input text using the existing TF-IDF vectorizer, ([text]) = collection of documents
+    text_tfidf = tfidf.transform([text])
+
+    #Predict the sentiment label
+    predicted_label = calibrated_svm_model.predict(text_tfidf)[0]
+
+    #Get probabilities for all three classes
+    probabilities = calibrated_svm_model.predict_proba(text_tfidf)[0]
+
+    #Map numerical labels to readable sentiment names
+    sentiment_names = {
+        -1: "Negative",
+        0: "Neutral",
+        1: "Positive"
+    }
+
+    #Find the position of the predicted class
+    predicted_class_index = list(
+        calibrated_svm_model.classes_
+    ).index(predicted_label)
+
+    #Get the probability belonging to the predicted class
+    confidence = probabilities[predicted_class_index]
+
+    return {
+        "text": text,
+        "label": int(predicted_label),
+        "sentiment": sentiment_names[predicted_label],
+        "confidence": confidence,
+        "all_probabilities": {
+            "Negative": probabilities[0],
+            "Neutral": probabilities[1],
+            "Positive": probabilities[2]
+        }
+    }
+
+#Test the function with some example sentences
+test_sentences = [
+    "I feel very happy and excited today",
+    "I am disappointed and everything feels terrible",
+    "The meeting will start at three o'clock",
+    "I am not happy with the result",
+    "The movie was okay, but some parts were boring"
+]
+
+print("\nManual Sentence Testing:")
+
+for sentence in test_sentences:
+    result = predict_sentiment(sentence)
+
+    print("\nText:", result["text"])
+    print("Predicted sentiment:", result["sentiment"])
+    print(
+        "Confidence:",
+        #Format confidence as a percentage with two decimal places
+        f'{result["confidence"] * 100:.2f}%'
+    )
+
+    print("All probabilities:")
+    for sentiment, probability in result["all_probabilities"].items():
+        print(
+            f" {sentiment}: {probability * 100:.2f}%"
+        )
+
