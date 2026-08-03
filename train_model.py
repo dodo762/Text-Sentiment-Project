@@ -8,6 +8,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 #For evaluating the model performance
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+#For training the linear SVM model
+from sklearn.svm import LinearSVC
 
 #Load the dataset
 df = pd.read_csv("Twitter_Data.csv")
@@ -112,6 +114,49 @@ print(
     confusion_matrix(
         y_test,
         y_pred,
+        labels=[-1, 0, 1]
+    )
+)
+
+#Step 5: Linear SVM model training
+#Create linear SVM model
+svm_model = LinearSVC(
+    random_state=42,
+)
+
+print("\nTraining the linear SVM model...")
+
+svm_model.fit(X_train_tfidf, y_train)
+
+print("Linear SVM training completed.")
+
+#Predict testing data 
+svm_pred = svm_model.predict(X_test_tfidf)
+
+#Calculate accuracy 
+svm_accuracy = accuracy_score(y_test, svm_pred)
+
+print("\nLinear SVM Model Evaluation")
+print("Accuracy:", svm_accuracy)
+
+#Display classification report for linear SVM model
+print("\nClassification Report:")
+print(
+    classification_report(
+        y_test,
+        svm_pred,
+        labels=[-1, 0, 1],
+        target_names=["Negative", "Neutral", "Positive"],
+        digits=4
+    )
+)
+
+#Display confusion matrix for linear SVM model
+print("\nConfusion Matrix:")
+print(
+    confusion_matrix(
+        y_test,
+        svm_pred,
         labels=[-1, 0, 1]
     )
 )
