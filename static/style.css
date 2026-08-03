@@ -1,0 +1,91 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    color: #222222;
+}
+
+.container {
+    width: min(760px, 92%);
+    margin: 50px auto;
+}
+
+.analysis-card {
+    background: #ffffff;
+    padding: 32px;
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.description {
+    margin-bottom: 24px;
+    color: #555555;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+textarea {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #cccccc;
+    border-radius: 8px;
+    resize: vertical;
+    font: inherit;
+}
+
+textarea:focus {
+    outline: 2px solid #6d8ea0;
+    border-color: transparent;
+}
+
+button {
+    width: 100%;
+    margin-top: 16px;
+    padding: 13px;
+    border: none;
+    border-radius: 8px;
+    background: #496f82;
+    color: #ffffff;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #385d6e;
+}
+
+.result-card {
+    margin-top: 28px;
+    padding: 22px;
+    border-radius: 10px;
+    background: #f1f5f7;
+}
+
+.probability-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 9px 0;
+    border-bottom: 1px solid #d8e0e4;
+}
+
+.error-message {
+    margin-top: 20px;
+    padding: 12px;
+    border-radius: 8px;
+    background: #ffe5e5;
+    color: #9b1c1c;
+}
