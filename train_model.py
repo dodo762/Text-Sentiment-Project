@@ -16,6 +16,10 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import precision_recall_fscore_support
 #For calibrating the predicted probabilities of the models(convert SVM decision scores into probability estimates)
 from sklearn.calibration import CalibratedClassifierCV
+#For saving and loading trained models
+import joblib
+#For handling file paths and directories
+import os
 
 #Load the dataset
 df = pd.read_csv("Twitter_Data.csv")
@@ -425,3 +429,22 @@ for sentence in test_sentences:
             f" {sentiment}: {probability * 100:.2f}%"
         )
 
+#Step 9: Save the trained models and TF-IDF vectorizer for future use
+#Create a folder for trained machine learning files
+os.makedirs("model", exist_ok=True)
+
+#Save the fitted TF-IDF vectorizer
+joblib.dump(
+    tfidf,
+    "model/tfidf_vectorizer.joblib"
+)
+
+#Save the calibrated Linear SVM model
+joblib.dump(
+    calibrated_svm_model,
+    "model/sentiment_model.joblib"
+)
+
+print("\nModel files saved successfully.")
+print("Saved vectorizer: model/tfidf_vectorizer.joblib")
+print("Saved model: model/sentiment_model.joblib")
