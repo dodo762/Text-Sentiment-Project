@@ -1,0 +1,21 @@
+<!--until step 6, continue from step 6-->
+{% extends "base.html" %}
+
+{% block title %}
+    Login | SentimentCare
+{% endblock %}
+
+{% block content %}
+    <section class="auth-card">
+        <h1>Login</h1>
+
+        <p class="description">
+            The login function will be added next.
+        </p>
+
+        <p class="auth-link">
+            Do not have an account?
+            <a href="{{ url_for('register') }}">Register</a>
+        </p>
+    </section>
+{% endblock %}

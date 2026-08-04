@@ -35,9 +35,27 @@
                     <a href="{{ url_for('analysis') }}">
                         Analyse Text
                     </a>
+                    <a href="{{ url_for('login') }}">
+                        Login
+                    </a>
+                    <a href="{{ url_for('register') }}">
+                        Register
+                    </a>
                 </div>
             </nav>
         </header>
+        <!--display flashed messages(to provide feedback after a request, such as successful registration/invalid input)-->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-container">
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
 
         <main class="page-content">
             {% block content %}
