@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Home | SentimentCare
+{% endblock %}
+
+{% block content %}
+    <section class="hero-section">
+        <div class="hero-content">
+            <p class="eyebrow">
+                Emotional awareness through text
+            </p>
+
+            <h1>
+                Understand the sentiment behind your words
+            </h1>
+
+            <p class="hero-description">
+                Enter a sentence or paragraph and receive a positive, neutral, or negative sentiment result together with a confidence score.
+            </p>
+
+            <a
+                class="primary-link"
+                href="{{ url_for('analysis') }}"
+            >
+                Start analysing    
+            </a>
+        </div>
+    </section>
+{% endblock %}

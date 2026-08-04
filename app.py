@@ -6,9 +6,14 @@ from sentiment_service import predict_sentiment
 #Create the Flask application
 app = Flask(__name__)
 
+#App currently have two routes(home page and sentiment analysis page)
+@app.route("/")
+def home():
+    return render_template("home.html")
+
 #Create home route, / = home page, GET = open page, POST = submit text for prediction
-@app.route("/", methods=["GET", "POST"])
-def index():
+@app.route("/analysis", methods=["GET", "POST"])
+def analysis():
     result = None
     error_message = None
 
@@ -26,7 +31,7 @@ def index():
                 error_message = f"Prediction failed: {error}"
 
     return render_template(
-        "index.html",
+        "analysis.html",
         result=result,
         error_message=error_message
     )

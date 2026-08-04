@@ -10,9 +10,85 @@ body {
     color: #222222;
 }
 
-.container {
-    width: min(760px, 92%);
-    margin: 50px auto;
+.site-header {
+    background: #ffffff;
+    border-bottom: 1px solid #e2e6e9;
+}
+
+.navbar {
+    width: min(1100px, 92%);
+    margin: auto;
+    padding: 18px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    color: #385d6e;
+    font-size: 22px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.nav-links {
+    display: flex;
+    gap: 22px;
+}
+
+.nav-links a {
+    color: #333333;
+    text-decoration: none;
+}
+
+.nav-links a:hover {
+    color: #496f82;
+}
+
+.page-content {
+    width: min(900px, 92%);
+    margin: 48px auto;
+}
+
+.hero-section {
+    min-height: 65vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.hero-content {
+    max-width: 700px;
+}
+
+.eyebrow {
+    color: #496f82;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.hero-content h1 {
+    margin: 12px 0;
+    font-size: 44px;
+    line-height: 1.15;
+}
+
+.hero-description {
+    color: #555555;
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+.primary-link {
+    display: inline-block;
+    margin-top: 18px;
+    padding: 13px 24px;
+    border-radius: 8px;
+    background: #496f82;
+    color: #ffffff;
+    text-decoration: none;
 }
 
 .analysis-card {
@@ -20,11 +96,6 @@ body {
     padding: 32px;
     border-radius: 14px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-}
-
-h1 {
-    margin-top: 0;
-    margin-bottom: 10px;
 }
 
 .description {
@@ -88,4 +159,20 @@ button:hover {
     border-radius: 8px;
     background: #ffe5e5;
     color: #9b1c1c;
+}
+
+@media (max-width: 600px) {
+    .navbar {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .hero-content h1 {
+        font-size: 34px;
+    }
+
+    .analysis-card {
+        padding: 22px;
+    }
 }
