@@ -252,6 +252,19 @@ def login():
     return render_template("login.html")
             
 
+#Step 4.7: Add logout functionality 
+@app.route("/logout")
+def logout():
+    #Remove user information from the session to log the user out
+    session.clear()
+
+    flash(
+        "You have been logged out successfully.",
+        "success"
+    )
+
+    return redirect(url_for("home"))
+
 #Create home route, / = home page, GET = open page, POST = submit text for prediction
 @app.route("/analysis", methods=["GET", "POST"])
 def analysis():
