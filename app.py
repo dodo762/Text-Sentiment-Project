@@ -1,16 +1,27 @@
 #Flask: create web application, render_template: display HTML page, request: read data submit by user
 from flask import (
-    Flask, 
+    Flask,
+    #to display message to user 
     flash,
+    #to redirect user to another page
     redirect,
+    #to display HTML page
     render_template, 
+    #to read data submit by user
     request,
+    #to store user session data
+    session,
     url_for
 )
 #MySQL: connect to MySQL database, Error: handle database errors, IntegrityError: handle unique constraint errors
 from mysql.connector import Error, IntegrityError
 #hash password for secure storage
-from werkzeug.security import generate_password_hash 
+from werkzeug.security import (
+    #to check if password match with hashed password in database
+    check_password_hash,
+    #to hash password for secure storage
+    generate_password_hash
+)
 from database import get_database_connection 
 #import own prediction function
 from sentiment_service import predict_sentiment
@@ -135,9 +146,109 @@ def register():
 
     return render_template("register.html")
 
-#Step 4: Add temporary login route
-@app.route("/login")
+#Step 4: Add login route to receive both page visits and form submissions 
+@app.route("/login", methods=["GET", "POST"])
 def login():
+    if request.method == "POST":
+        #Read username or email 
+        login_identifier = request.form.get("login_identifier", "").strip() 
+        #Read password 
+        password = request.form.get("password", "")
+
+        #check if username/email and password are provided
+        if not login_identifier or not password:
+            flash(
+                "Please enter your username or email and password.",
+                "error"
+            )
+
+            return render_template("login.html")
+
+        connection = get_database_connection()
+
+        if connection is None:
+            flash(
+                "The application could not connect to the database.",
+                "error"
+            )
+            return render_template("login.html")
+
+        cursor = None 
+
+        try:
+            #Create a cursor that returns database rows as dictionaries
+            cursor = connection.cursor(dictionary=True)
+
+            find_user_query = """
+                SELECT id, username, email, password_hash
+                FROM users
+                -- Allow user login using either username or email
+                WHERE username = %s OR email = %s
+                -- Tell the database to return only one record, since username and email are unique
+                LIMIT 1
+            """
+
+            cursor.execute(
+                find_user_query,
+                (
+                    login_identifier,
+                    login_identifier.lower()
+                )
+            )
+
+            #Read the matching user from database, if no matching user, user will be None
+            user = cursor.fetchone()
+
+            if user is None:
+                flash(
+                    "Invalid username, email, or password.",
+                    "error"
+                )
+                return render_template("login.html")
+
+            #return either true or false, if password match with hashed password in database
+            password_is_correct = check_password_hash(
+                user["password_hash"],
+                password
+            )
+
+            #error message if password is incorrect 
+            if not password_is_correct:
+                flash(
+                    "Invalid username, email, or password.",
+                    "error"
+                )
+                return render_template("login.html")
+
+            #Remove any old session data before creating a new login session 
+            session.clear() 
+
+            #Store user information in the session to keep the user logged in
+            session["user_id"] = user["id"]
+            session["username"] = user["username"]
+
+            flash(
+                f"Welcome back, {user['username']}!",
+                "success"
+            )
+
+            return redirect(url_for("home"))
+
+        except Error as error:
+            print("Login database error:", error)
+
+            flash(
+                "Login failed because of a database error.",
+                "error"
+            )
+
+        finally:
+            if cursor is not None:
+                cursor.close()
+
+            if connection.is_connected():
+                connection.close()
+            
     return render_template("login.html")
             
 
