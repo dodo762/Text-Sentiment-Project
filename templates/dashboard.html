@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Dashboard | SentimentCare
+{% endblock %}
+
+{% block content %}
+    <section class="dashboard-section">
+        <h1>Dashboard</h1>
+
+        <p class="description">
+            View a summary of your sentiment analysis records.
+        </p>
+
+        <!-- display values sent from app.py -->
+        <div class="dashboard-grid">
+            <article class="dashboard-card">
+                <h2>Total Analyses</h2>
+                <p>{{ total_count }}</p>
+            </article>
+
+            <article class="dashboard-card">
+                <h2>Positive</h2>
+                <p>{{ positive_count }}</p>
+                <small>{{ positive_percentage }}%</small>
+            </article>
+
+            <article class="dashboard-card">
+                <h2>Neutral</h2>
+                <p>{{ neutral_count }}</p>
+                <small>{{ neutral_percentage }}%</small>
+            </article>
+
+            <article class="dashboard-card">
+                <h2>Negative</h2>
+                <p>{{ negative_count }}</p>
+                <small>{{ negative_percentage }}%</small>
+            </article>
+        </div>
+    </section>
+{% endblock %}

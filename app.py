@@ -451,6 +451,100 @@ def history():
 
         if connection.is_connected():
             connection.close()
+
+#Step 6.1: Create temporary dashboard route 
+@app.route("/dashboard")
+@login_required
+def dashboard():
+    connection = get_database_connection()
+
+    if connection is None:
+        flash(
+            "The application could not connect to the database.",
+            "error"
+        )
+
+        return render_template(
+            "dashboard.html",
+            total_count=0,
+            positive_count=0,
+            neutral_count=0,
+            negative_count=0
+        )
+
+    cursor = None
+
+    try:
+        cursor = connection.cursor(dictionary=True)
+
+        dashboard_query = """
+            SELECT
+                -- Count all saved analyses for the current user 
+                COUNT(*) AS total_count,
+                -- Count rows where sentiment is Positive, Neutral, and Negative for the current user
+                SUM(sentiment = 'Positive') AS positive_count,
+                SUM(sentiment = 'Neutral') AS neutral_count,
+                SUM(sentiment = 'Negative') AS negative_count
+            FROM sentiment_history
+            -- to ensure dashboard only summarizes the logged-in user's records
+            WHERE user_id = %s
+        """
+
+        cursor.execute(
+            dashboard_query,
+            (session["user_id"],)
+        )
+
+        summary = cursor.fetchone()
+
+        total_count = summary["total_count"] or 0
+        positive_count = summary["positive_count"] or 0
+        neutral_count = summary["neutral_count"] or 0
+        negative_count = summary["negative_count"] or 0
+
+        #to prevent error occur if new user has no record, total_count = 0, cannot divide by 0
+        if total_count > 0:
+            positive_percentage = round(positive_count / total_count * 100, 1)
+            neutral_percentage = round(neutral_count / total_count * 100, 1)
+            negative_percentage = round(negative_count / total_count * 100, 1)
+        else:
+            positive_percentage = 0
+            neutral_percentage = 0
+            negative_percentage = 0
+
+        return render_template(
+            "dashboard.html",
+            total_count=total_count,
+            positive_count=positive_count,
+            neutral_count=neutral_count,
+            negative_count=negative_count,
+            positive_percentage=positive_percentage,
+            neutral_percentage=neutral_percentage,
+            negative_percentage=negative_percentage
+        )
+
+    except Error as error:
+        print("Dashboard database error:", error)
+
+        flash(
+            "The dashboard summary could not be loaded.",
+            "error"
+        )
+
+        return render_template(
+            "dashboard.html",
+            total_count=0,
+            positive_count=0,
+            neutral_count=0,
+            negative_count=0
+        )
+
+    finally:
+        if cursor is not None:
+            cursor.close()
+
+        if connection.is_connected():
+            connection.close()
         
 
 if __name__ == "__main__":
