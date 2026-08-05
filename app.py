@@ -380,6 +380,78 @@ def analysis():
         error_message=error_message
     )
 
+@app.route("/history")
+@login_required
+def history():
+    connection = get_database_connection()
+
+    if connection is None:
+        flash(
+            "The application could not connect to the database.",
+            "error"
+        )
+        #return an empty history_records list to the template to avoid errors in the template rendering
+        return render_template(
+            "history.html",
+            history_records=[]
+        )
+
+    #Create a cursor that returns database rows as dictionaries
+    cursor = None
+
+    try:
+        cursor = connection.cursor(dictionary=True)
+
+        history_query = """
+            SELECT
+                id, 
+                input_text,
+                numerical_label,
+                sentiment,
+                confidence,
+                negative_probability,
+                neutral_probability,
+                positive_probability,
+                created_at
+            FROM sentiment_history
+            -- to ensure privacy 
+            WHERE user_id = %s
+            ORDER BY created_at DESC
+        """
+
+        cursor.execute(
+            history_query,
+            #comma use to make this as one-item tuple for MySQL 
+            (session["user_id"],)
+        )
+
+        history_records = cursor.fetchall()
+
+        return render_template(
+            "history.html",
+            history_records=history_records
+        )
+
+    except Error as error:
+        print("History database error:", error)
+
+        flash(
+            "The sentiment history could not be loaded.",
+            "error"
+        )
+
+        return render_template(
+            "history.html",
+            history_records=[]
+        )
+
+    finally:
+        if cursor is not None:
+            cursor.close()
+
+        if connection.is_connected():
+            connection.close()
+        
 
 if __name__ == "__main__":
     app.run(debug=True)

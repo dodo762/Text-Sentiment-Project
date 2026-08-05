@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Sentiment History | SentimentCare
+{% endblock %}
+
+{% block content %}
+    <section class="history-section">
+        <h1>Sentiment History</h1>
+
+        <p class="description">
+            Review your previous sentiment analysis results.
+        </p>
+        
+        <!--check whether the database returned any records-->
+        {% if history_records %}
+            <!--Loop through every saved result-->
+            {% for record in history_records %}
+                <article class="history-card">
+                    <div class="history-card-header">
+                        <strong>
+                            {{ record.sentiment }}
+                        </strong>
+
+                        <span>
+                            {{ record.confidence }}% confidence
+                        </span>
+                    </div>
+
+                    <p class="history-text">
+                        {{ record.input_text }}
+                    </p>
+
+                    <div class="history-probabilities">
+                        <span>
+                            Negative:
+                            {{ record.negative_probability }}%
+                        </span>
+
+                        <span>
+                            Neutral:
+                            {{ record.neutral_probability }}%
+                        </span>
+
+                        <span>
+                            Positive:
+                            {{ record.positive_probability }}%
+                        </span>
+                    </div>
+
+                    <small>
+                        {{ record.created_at }}
+                    </small>
+                </article>
+            {% endfor %}
+        {% else %}
+            <p>
+                You do not have any sentiment history yet.
+            </p>
+        {% endif %}
+    </section>
+{% endblock %}
