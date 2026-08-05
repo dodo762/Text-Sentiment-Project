@@ -1,3 +1,5 @@
+#For login-required decorator, to protect certain routes from being accessed by unauthenticated users
+from functools import wraps
 #Flask: create web application, render_template: display HTML page, request: read data submit by user
 from flask import (
     Flask,
@@ -30,6 +32,23 @@ from sentiment_service import predict_sentiment
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "fyp-development-secret-key"  #Own secret key
 
+def login_required(view_function):
+    #Decorator to protect routes that require user authentication
+    @wraps(view_function)
+    def wrapped_view(*args, **kwargs):
+        #Check if the user currently is logged in 
+        if "user_id" not in session:
+            flash(
+                "Please log in to access this page.",
+                "error"
+            )
+            #redirect to login page if user is not logged in
+            return redirect(url_for("login"))
+        #to allow the original view function to be called if the user is logged in
+        return view_function(*args, **kwargs)
+
+    return wrapped_view
+
 #App currently have two routes(home page and sentiment analysis page)
 @app.route("/")
 def home():
@@ -37,6 +56,9 @@ def home():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    #to prevent logged in user from accessing register page, redirect to home page
+    if "user_id" in session:
+        return redirect(url_for("home"))
     if request.method == "POST":
         username = request.form.get("username", "").strip()
         email = request.form.get("email", "").strip().lower()
@@ -149,6 +171,10 @@ def register():
 #Step 4: Add login route to receive both page visits and form submissions 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    #to prevent logged in user from accessing login page, redirect to home page
+    if "user_id" in session:
+        return redirect(url_for("home"))
+
     if request.method == "POST":
         #Read username or email 
         login_identifier = request.form.get("login_identifier", "").strip() 
@@ -267,6 +293,8 @@ def logout():
 
 #Create home route, / = home page, GET = open page, POST = submit text for prediction
 @app.route("/analysis", methods=["GET", "POST"])
+#Add login_required decorator to protect the analysis route, only allow logged in user to access
+@login_required
 def analysis():
     result = None
     error_message = None
