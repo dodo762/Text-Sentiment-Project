@@ -226,17 +226,22 @@ button:hover {
     color: #9b1c1c;
 }
 
+/*Centered content container*/
 .history-section {
     max-width: 1100px;
+    /*Add 60px of vertical spacing above and below the section*/
     margin: 60px auto;
+    /*add 24px of internal padding on left and right, no padding for top and bottom*/
     padding: 0 24px;
 }
 
 .history-section h1 {
+    /*Add 12px of spacing below the heading, tight but clear separation from the next content*/
     margin-bottom: 12px;
 }
 
 .history-section .description {
+    /*Add 30px of spacing below the description, clear separation from the next content*/
     margin-bottom: 30px;
 }
 
