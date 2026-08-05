@@ -35,12 +35,24 @@
                     <a href="{{ url_for('analysis') }}">
                         Analyse Text
                     </a>
-                    <a href="{{ url_for('login') }}">
-                        Login
-                    </a>
-                    <a href="{{ url_for('register') }}">
-                        Register
-                    </a>
+                    <!--to make the navigation bar show different between logged in and logged out-->
+                    {% if session.get("user_id") %}
+                        <span>
+                            Hello, {{ session.get("username") }}
+                        </span>
+
+                        <a href="{{ url_for('logout') }}">
+                            Logout
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('login') }}">
+                            Login
+                        </a>
+
+                        <a href="{{ url_for('register') }}">
+                            Register
+                        </a>
+                    {% endif %}
                 </div>
             </nav>
         </header>
