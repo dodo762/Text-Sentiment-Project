@@ -309,6 +309,68 @@ def analysis():
             try:
                 #Call model to predict
                 result = predict_sentiment(user_text)
+                connection = get_database_connection()
+
+                if connection is None:
+                    error_message = (
+                        "The prediction worked, but the result could not "
+                        "be saved because the database connection failed."   
+                    )
+                else:
+                    cursor = None
+
+                    try:
+                        cursor = connection.cursor()
+
+                        insert_history_query = """
+                            INSERT INTO sentiment_history(
+                                user_id,
+                                input_text,
+                                numerical_label,
+                                sentiment,
+                                confidence,
+                                negative_probability,
+                                neutral_probability,
+                                positive_probability
+                            )
+                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                        """
+
+                        cursor.execute(
+                            insert_history_query,
+                            (
+                                #save result under currently loggen-in user 
+                                session["user_id"],
+                                result["text"],
+                                #-1/0/1
+                                result["label"],
+                                result["sentiment"],
+                                result["confidence"],
+                                #access nested probabilities dictionary to get the probability of each sentiment class
+                                result["probabilities"]["Negative"],
+                                result["probabilities"]["Neutral"],
+                                result["probabilities"]["Positive"]
+                            )
+                        )
+                        #permanently save the record 
+                        connection.commit()
+
+                    except Error as error:
+                        connection.rollback()
+
+                        print("Sentiment history database error:", error)
+
+                        error_message = (
+                            "The prediction worked, but the result could not be saved."
+                        )
+
+                    finally:
+                        if cursor is not None:
+                            cursor.close()
+
+                        if connection.is_connected():
+                            connection.close()
+                        
             except Exception as error:
                 error_message = f"Prediction failed: {error}"
 
@@ -317,6 +379,7 @@ def analysis():
         result=result,
         error_message=error_message
     )
+
 
 if __name__ == "__main__":
     app.run(debug=True)
