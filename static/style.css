@@ -345,3 +345,73 @@ button:hover {
     color: #7a8790;
     font-size: 0.95rem;
 }
+
+.distribution-section {
+    background-color: white;
+    border-radius: 14px;
+    padding: 28px;
+    margin-top: 28px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0,08);
+}
+
+.distribution-section h2 {
+    margin-top: 0;
+    margin-bottom: 24px;
+}
+
+.distribution-item {
+    margin-bottom: 22px;
+}
+
+.distribution-item:last-child {
+    margin-bottom: 0;
+}
+
+.distribution-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.distribution-progress {
+    width: 100%;
+    height: 16px;
+    border: none;
+    border-radius: 999px;
+    overflow: hidden;
+    background-color: #e3e8eb;
+}
+
+.distribution-progress::-webkit-progress-bar {
+    background-color: #e3e8eb;
+    border-radius: 999px;
+}
+
+.distribution-progress::-webkit-progress-value {
+    border-radius: 999px;
+}
+
+.positive-progress::-webkit-progress-value {
+    background-color: #62a675;
+}
+
+.neutral-progress::-webkit-progress-value {
+    background-color: #d5ad55;
+}
+
+.negative-progress::-webkit-progress-value {
+    background-color: #c96b6b;
+}
+
+.positive-progress::-moz-progress-bar {
+    background-color: #62a675;
+}
+
+.neutral-progress::-moz-progress-bar {
+    background-color: #d5ad55;
+}
+
+.negative-progress::-moz-progress-bar {
+    background-color: #c96b6b;
+}

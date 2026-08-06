@@ -37,5 +37,61 @@
                 <small>{{ negative_percentage }}%</small>
             </article>
         </div>
+
+        <section class="distribution-section">
+                <h2>Sentiment Distribution</h2>
+
+                {% if total_count > 0 %}
+                    <div class="distribution-item">
+                        <div class="distribution-label">
+                            <span>Positive</span>
+                            <span>{{ positive_percentage }}%</span>
+                        </div>
+
+                        <progress
+                            class="distribution-progress positive-progress"
+                            value="{{ positive_percentage }}"
+                            max="100"
+                        >
+                            {{ positive_percentage }}%        
+                        </progress>
+                    </div>
+
+                    <div class="distribution-item">
+                        <div class="distribution-label">
+                            <span>Neutral</span>
+                            <span>{{ neutral_percentage }}%</span>
+                        </div>
+
+                        <progress
+                            class="distribution-progress neutral-progress"
+                            value="{{ neutral_percentage }}"
+                            max="100"
+                        >
+                            {{ neutral_percentage }}%
+                        </progress>
+
+                    </div>
+
+                    <div class="distribution-item">
+                        <div class="distribution-label">
+                            <span>Negative</span>
+                            <span>{{ negative_percentage }}%</span>
+                        </div>
+
+                        <progress
+                            class="distribution-progress negative-progress"
+                            value="{{ negative_percentage }}"
+                            max="100"
+                        >
+                            {{ negative_percentage }}%
+                        </progress>
+                    </div>
+                {% else %}
+                    <p>
+                        Analyse some text to see your sentiment distribution.
+                    </p>
+                {% endif %}
+            </section>
     </section>
 {% endblock %}
