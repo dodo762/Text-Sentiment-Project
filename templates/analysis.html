@@ -66,6 +66,12 @@
                         <!-- Display values created in app.py-->
                         <h3>{{ recommendation.title }}</h3>
                         <p>{{ recommendation.message }}</p>
+                        <!-- If the sentiment is negative, display a link to the breathing exercise page -->
+                        {% if result.sentiment == "Negative" %}
+                            <a href="{{ url_for('breathing') }}" class="recommendation-link">
+                                Try a breathing exercise
+                            </a>
+                        {% endif %}
                     </div>
                 {% endif %}
             </section>

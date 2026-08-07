@@ -462,3 +462,18 @@ button:hover {
     border-radius: 8px;
     font-size: 0.95rem;
 }
+
+.recommendation-link {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 10px 16px;
+    background-color: #5b7c8d;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+.recommendation-link:hover {
+    opacity: 0.9;
+}
