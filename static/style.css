@@ -477,3 +477,21 @@ button:hover {
 .recommendation-link:hover {
     opacity: 0.9;
 }
+
+.reflection-section {
+    margin-top: 24px;
+    padding: 22px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    border-left: 5px solid #5b7c8d;
+}
+
+.reflection-section h2 {
+    margin-top: 0;
+    margin-bottom: 18px;
+}
+
+.reflection-section p {
+    margin-bottom: 14px;
+    line-height: 1.6;
+}

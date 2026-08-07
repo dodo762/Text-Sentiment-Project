@@ -32,11 +32,12 @@
                         Home
                     </a>
 
-                    <a href="{{ url_for('analysis') }}">
-                        Analyse Text
-                    </a>
+                    
                     <!--to make the navigation bar show different between logged in and logged out-->
                     {% if session.get("user_id") %}
+                        <a href="{{ url_for('analysis') }}">
+                            Analyse Text
+                        </a>
                         <a href="{{ url_for('dashboard') }}">
                             Dashboard
                         </a>
@@ -47,6 +48,10 @@
 
                         <a href="{{ url_for('breathing') }}">
                             Breathing  
+                        </a>
+
+                        <a href="{{ url_for('reflect') }}">
+                            Reflection
                         </a>
 
                         <span>

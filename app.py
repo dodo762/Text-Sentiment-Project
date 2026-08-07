@@ -598,5 +598,11 @@ def dashboard():
 def breathing():
     return render_template("breathing.html")
 
+#Step 9.2 Add daily reflection route
+@app.route("/reflect")
+@login_required
+def reflect():
+    return render_template("reflect.html")
+
 if __name__ == "__main__":
     app.run(debug=True)
