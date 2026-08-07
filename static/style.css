@@ -436,3 +436,29 @@ button:hover {
     /* Separate the recommendation from the grey result area */
     line-height: 1.6;
 }
+
+.breathing-instructions {
+    margin-top: 24px;
+    padding: 22px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    border-left: 5px solid #5b7c8d;
+}
+
+.breathing-instructions h2 {
+    margin-top: 0;
+    margin-bottom: 18px;
+}
+
+.breathing-instructions p {
+    margin-bottom: 14px;
+    line-height: 1.6;
+}
+
+.exercise-note {
+    margin-top: 20px;
+    padding: 14px;
+    background-color: #fff4e5;
+    border-radius: 8px;
+    font-size: 0.95rem;
+}

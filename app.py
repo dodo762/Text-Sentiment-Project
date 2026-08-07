@@ -591,7 +591,12 @@ def dashboard():
 
         if connection.is_connected():
             connection.close()
-        
+
+#Step 8.2 Create URL(new route) for breathing exercise page, only allow logged in user to access
+@app.route("/breathing")
+@login_required
+def breathing():
+    return render_template("breathing.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
