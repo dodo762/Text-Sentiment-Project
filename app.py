@@ -291,12 +291,56 @@ def logout():
 
     return redirect(url_for("home"))
 
+def get_sentiment_recommendation(sentiment):
+    """
+
+    Return a simple emotional-awareness recommendation based on the predicted sentiment. 
+    """
+
+    recommendations = {
+        "Positive": {
+            "title": "Keep the positive momentum",
+            "message": (
+                "Your text expresses a positive sentiment. "
+                "Take a moment to notice what contributed to this feeling "
+                "and consider recording it in your reflection."
+            )
+        },
+        "Neutral": {
+            "title": "Take a moment to reflect",
+            "message": (
+                "Your text expresses a neutral sentiment. "
+                "You may reflect on whether there are any emotions or thoughts "
+                "that were not clearly expressed in the text. "
+            )
+        },
+        "Negative": {
+            "title": "Pause and take care of yourself",
+            "message": (
+                "Your text expresses a negative sentiment. "
+                "Consider taking a short break, practicing slow breathing, "
+                "or writing more about what may be affecting you. "
+            )
+        }
+    }
+    #Return the recommendation based on the sentiment, prevents an error if an unexpected sentiment value is received
+    return recommendations.get(
+        sentiment, 
+        {
+            "title": "Reflect on your feelings",
+            "message": (
+                "Take a moment to consider the emotions expressed in your text."
+            )
+        }
+    )
+
 #Create home route, / = home page, GET = open page, POST = submit text for prediction
 @app.route("/analysis", methods=["GET", "POST"])
 #Add login_required decorator to protect the analysis route, only allow logged in user to access
 @login_required
 def analysis():
     result = None
+    recommendation = None
     error_message = None
 
     if request.method == "POST":
@@ -309,6 +353,7 @@ def analysis():
             try:
                 #Call model to predict
                 result = predict_sentiment(user_text)
+                recommendation = get_sentiment_recommendation(result["sentiment"])
                 connection = get_database_connection()
 
                 if connection is None:
@@ -377,6 +422,7 @@ def analysis():
     return render_template(
         "analysis.html",
         result=result,
+        recommendation=recommendation,
         error_message=error_message
     )
 

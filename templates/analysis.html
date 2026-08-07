@@ -59,6 +59,15 @@
                         <span>{{ probability }}</span>
                     </div>
                 {% endfor %}
+                
+                <!-- Check whether a recommendation exists-->
+                {% if recommendation %}
+                    <div class="recommendation-box">
+                        <!-- Display values created in app.py-->
+                        <h3>{{ recommendation.title }}</h3>
+                        <p>{{ recommendation.message }}</p>
+                    </div>
+                {% endif %}
             </section>
         {% endif %}
     </section>

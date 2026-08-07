@@ -415,3 +415,24 @@ button:hover {
 .negative-progress::-moz-progress-bar {
     background-color: #c96b6b;
 }
+
+.recommendation-box {
+    /* Add spacing between probabilities and recommendation */
+    margin-top: 20px;
+    padding: 18px;
+    /* Add a left border to visually separate the recommendation */
+    border-left: 5px solid #5b7c8d;
+    border-radius: 8px;
+    background-color: #ffffff;
+}
+
+.recommendation-box h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.recommendation-box p {
+    margin-bottom: 0;
+    /* Separate the recommendation from the grey result area */
+    line-height: 1.6;
+}
