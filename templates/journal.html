@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Mood Journal
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="content-card">
+        <h1>Mood Journal</h1>
+
+        <p>
+            Write about your thoughts, experiences, or feelings from today.
+        </p>
+
+        <form method="POST">
+            <label for="title">Title</label>
+            <input
+                type="text"
+                id="title"
+                name="title"
+                maxlength="150"
+                placeholder="Optional journal title"
+            >
+
+            <label for="mood">Mood</label>
+            <select id="mood" name="mood">
+                <option value="">Select a mood</option>
+                <option value="Positive">Positive</option>
+                <option value="Neutral">Neutral</option>
+                <option value="Negative">Negative</option>
+            </select>
+
+            <label for="content">Journal entry</label>
+            <textarea
+                id="content"
+                name="content"
+                rows="8"
+                required
+                placeholder="Write your reflection here..."
+            ></textarea>
+
+            <button type="submit">Save Journal Entry</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -604,5 +604,49 @@ def breathing():
 def reflect():
     return render_template("reflect.html")
 
+#Step 10.3 Add journal route
+@app.route("/journal", methods=["GET", "POST"])
+@login_required
+def journal():
+    #read title, mood, and content from the form submission
+    if request.method == "POST":
+        title = request.form.get("title", "").strip()
+        mood = request.form.get("mood", "").strip()
+        content = request.form.get("content", "").strip()
+
+        #Reject empty journal entry
+        if not content:
+            flash("Journal entry cannot be empty.", "error")
+            return render_template("journal.html")
+
+        connection = get_database_connection()
+        cursor = connection.cursor()
+
+        cursor.execute(
+            """
+            INSERT INTO journal_entries (user_id, title, content, mood)
+            VALUES (%s, %s, %s, %s)
+            """,
+            (   
+                #insert entry using the logged-in user's ID 
+                session["user_id"],
+                title if title else None,
+                content,
+                mood if mood else None
+            )
+        )
+
+        #save into MySQL database, if not commit, record will not be saved
+        connection.commit()
+        cursor.close()
+        connection.close()
+
+        #Show success message 
+        flash("Journal entry saved successfully.", "success")
+        return redirect(url_for("journal"))
+
+    #Redirect back to journal page
+    return render_template("journal.html")
+
 if __name__ == "__main__":
     app.run(debug=True)
