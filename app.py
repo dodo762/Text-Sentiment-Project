@@ -645,8 +645,30 @@ def journal():
         flash("Journal entry saved successfully.", "success")
         return redirect(url_for("journal"))
 
-    #Redirect back to journal page
-    return render_template("journal.html")
+    connection = get_database_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    cursor.execute(
+        """
+        SELECT id, title, content, mood, created_at
+        FROM journal_entries
+        -- to ensure privacy, only show the logged-in user's journal entries
+        WHERE user_id = %s
+        -- display the most recent entries first
+        ORDER BY created_at DESC
+        """,
+        (session["user_id"],)
+    )
+
+    entries = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+
+    return render_template(
+        "journal.html",
+        entries=entries
+    )
 
 if __name__ == "__main__":
     app.run(debug=True)

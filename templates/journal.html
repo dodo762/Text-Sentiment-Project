@@ -41,6 +41,31 @@
             ></textarea>
 
             <button type="submit">Save Journal Entry</button>
+            {% if entries %}
+                <div class="journal-list">
+                    <h2>Your Journal Entries</h2>
+
+                    <!--loop through all journal records that belong to the current user-->
+                    {% for entry in entries %}
+                        <div class="journal-entry-card">
+                            <h3>
+                                {{ entry.title if entry.title else "Untitled Entry" }}
+                            </h3>
+
+                            {% if entry.mood %}
+                                <p><strong>Mood:</strong> {{ entry.mood }}</p>
+                            {% endif %}
+
+                            <p>{{ entry.content }}</p>
+                            
+                            <!-- format the timestamp into "day month year, hour:minute AM/PM" -->
+                            <small>
+                                {{ entry.created_at.strftime("%d %b %Y, %I:%M %p") }}
+                            </small>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
         </form>
     </div>
 </div>
