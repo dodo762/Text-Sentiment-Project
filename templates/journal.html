@@ -41,32 +41,51 @@
             ></textarea>
 
             <button type="submit">Save Journal Entry</button>
-            {% if entries %}
-                <div class="journal-list">
-                    <h2>Your Journal Entries</h2>
-
-                    <!--loop through all journal records that belong to the current user-->
-                    {% for entry in entries %}
-                        <div class="journal-entry-card">
-                            <h3>
-                                {{ entry.title if entry.title else "Untitled Entry" }}
-                            </h3>
-
-                            {% if entry.mood %}
-                                <p><strong>Mood:</strong> {{ entry.mood }}</p>
-                            {% endif %}
-
-                            <p>{{ entry.content }}</p>
-                            
-                            <!-- format the timestamp into "day month year, hour:minute AM/PM" -->
-                            <small>
-                                {{ entry.created_at.strftime("%d %b %Y, %I:%M %p") }}
-                            </small>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
+            
         </form>
+
+        {% if entries %}
+            <div class="journal-list">
+                <h2>Your Journal Entries</h2>
+
+                <!--loop through all journal records that belong to the current user-->
+                {% for entry in entries %}
+                    <div class="journal-entry-card">
+                        <h3>
+                            {{ entry.title if entry.title else "Untitled Entry" }}
+                        </h3>
+
+                        {% if entry.mood %}
+                            <p><strong>Mood:</strong> {{ entry.mood }}</p>
+                        {% endif %}
+
+                        <p>{{ entry.content }}</p>
+                            
+                        <!-- format the timestamp into "day month year, hour:minute AM/PM" -->
+                        <small>
+                            {{ entry.created_at.strftime("%d %b %Y, %I:%M %p") }}
+                        </small>
+
+                        <!-- Step 10.12: add edit journal entry-->
+                        <a
+                            href="{{ url_for('edit_journal_entry', entry_id=entry.id) }}"
+                            class="edit-button"
+                        >
+                            Edit
+                        </a>
+
+                        <form
+                            method="POST"
+                            action="{{ url_for('delete_journal_entry', entry_id=entry.id) }}"
+                        >
+                            <button type="submit" class="delete_button">
+                                Delete
+                            </button>
+                        </form>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

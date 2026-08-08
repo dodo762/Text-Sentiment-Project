@@ -670,5 +670,59 @@ def journal():
         entries=entries
     )
 
+@app.route("/journal/delete/<int:entry_id>", methods=["POST"])
+@login_required
+def delete_journal_entry(entry_id):
+    connection = get_database_connection()
+    cursor = connection.cursor()
+
+    cursor.execute(
+        """
+        DELETE FROM journal_entries
+        -- to make sure it not delete other user's journal even if the id is matches
+        WHERE id = %s AND user_id = %s
+        """,
+        #to ensure that the deletion is performed only for the logged-in user's entry, preventing unauthorized deletion of other users' entries
+        (entry_id, session["user_id"])
+    )
+
+    connection.commit()
+    cursor.close()
+    connection.close()
+
+    flash("Journal entry deleted successfully.", "success")
+    return redirect(url_for("journal"))
+
+
+#Step 10.13 Add edit journal entry route
+@app.route("/journal/edit/<int:entry_id>")
+@login_required
+def edit_journal_entry(entry_id):
+    connection = get_database_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    cursor.execute(
+        """
+        SELECT id, title, content, mood, created_at
+        FROM journal_entries
+        WHERE id = %s AND user_id = %s
+        """,
+        (entry_id, session["user_id"])
+    )
+
+    entry = cursor.fetchone()
+
+    cursor.close()
+    connection.close()
+
+    if entry is None:
+        flash("Journal entry not found.", "error")
+        return redirect(url_for("journal"))
+
+    return render_template(
+        "edit_journal.html",
+        entry=entry
+    )
+
 if __name__ == "__main__":
     app.run(debug=True)
