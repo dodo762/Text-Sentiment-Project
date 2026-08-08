@@ -695,7 +695,7 @@ def delete_journal_entry(entry_id):
 
 
 #Step 10.13 Add edit journal entry route
-@app.route("/journal/edit/<int:entry_id>")
+@app.route("/journal/edit/<int:entry_id>", methods=["GET", "POST"])
 @login_required
 def edit_journal_entry(entry_id):
     connection = get_database_connection()
@@ -710,6 +710,7 @@ def edit_journal_entry(entry_id):
         (entry_id, session["user_id"])
     )
 
+    #Get the selected row
     entry = cursor.fetchone()
 
     cursor.close()
@@ -717,6 +718,40 @@ def edit_journal_entry(entry_id):
 
     if entry is None:
         flash("Journal entry not found.", "error")
+        return redirect(url_for("journal"))
+
+    if request.method == "POST":
+        title = request.form.get("title","").strip()
+        mood = request.form.get("mood","").strip()
+        content = request.form.get("content","").strip()
+
+        if not content:
+            flash("Journal entry cannot be empty.", "error")
+            return render_template("edit_journal.html", entry=entry)
+
+        connection = get_database_connection()
+        cursor = connection.cursor()
+
+        cursor.execute(
+            """
+            UPDATE journal_entries
+            SET title = %s, mood = %s, content = %s
+            WHERE id = %s AND user_id = %s
+            """,
+            (
+                title if title else None, 
+                mood if mood else None,
+                content,
+                entry_id,
+                session["user_id"]
+            )
+        )
+
+        connection.commit()
+        cursor.close()
+        connection.close()
+
+        flash("Journal entry updated successfully.","success")
         return redirect(url_for("journal"))
 
     return render_template(

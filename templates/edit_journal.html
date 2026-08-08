@@ -1,0 +1,57 @@
+<!--Mood Journaling: Step 10.14: Create page for edit journal-->
+{% extends "base.html" %}
+
+{% block title %}Edit Journal Entry{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="content-card">
+        <h1>Edit Journal Entry</h1>
+
+        <form method="POST">
+            <label for="title">Title</label>
+            <!--Existing database values are inserted into the form automatically-->
+            <input
+                type="text"
+                id="title"
+                name="title"
+                maxlength="150"
+                value="{{ entry.title if entry.title else '' }}"
+            >
+
+            <label for="mood">Mood</label>
+            <select id="mood" name="mood">
+                <option value="">Select a mood</option>
+
+                <option value="Positive"
+                    {% if entry.mood == "Positive" %}selected{% endif %}>
+                    Positive
+                </option>
+
+                <option value="Neutral"
+                    {% if entry.mood == "Neutral" %}selected{% endif %}>
+                    Neutral
+                </option>
+
+                <option value="Negative"
+                    {% if entry.mood == "Negative" %}selected{% endif %}>
+                    Negative
+                </option>
+            </select>
+
+            <!--Put existing journal text back inside the textarea-->
+            <label for="content">Journal entry</label>
+            <textarea
+                id="content"
+                name="content"
+                rows="8"
+                required
+            >{{ entry.content }}</textarea>
+
+            <button type="submit">
+                Update Journal Entry
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
