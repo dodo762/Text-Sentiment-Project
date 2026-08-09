@@ -547,3 +547,20 @@ button:hover {
 .journal-entry-card small {
     color: #666666;
 }
+
+.reminder-box {
+    max-width: 1160px;
+    margin: 30px auto 10px;
+    padding: 20px 24px;
+    background: #eef5f8;
+    border-left: 5px solid #5f7f91;
+    border-radius: 10px;
+}
+
+.reminder-box h2 {
+    margin-top: 0;
+}
+
+.reminder-box p {
+    margin-bottom: 16px;
+}

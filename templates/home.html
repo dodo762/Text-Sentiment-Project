@@ -5,6 +5,21 @@
 {% endblock %}
 
 {% block content %}
+
+    {% if show_reminder %}
+    <div class="reminder-box">
+        <h2>Daily Reminder</h2>
+
+        <p>
+            Remember to complete today's emotional check-in before your selected reminder time.
+        </p>
+
+        <a href="{{ url_for('analysis') }}" class="recommendation-link">
+            Analyse Text
+        </a>
+    </div>
+    {% endif %}
+    
     <section class="hero-section">
         <div class="hero-content">
             <p class="eyebrow">

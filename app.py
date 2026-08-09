@@ -27,6 +27,8 @@ from werkzeug.security import (
 from database import get_database_connection 
 #import own prediction function
 from sentiment_service import predict_sentiment
+#for handling date and time operations(datetime gives current time, timedelta help to calculate 30 minutes before the saved reminder time)
+from datetime import datetime, timedelta
 
 #Create the Flask application
 app = Flask(__name__)
@@ -52,7 +54,53 @@ def login_required(view_function):
 #App currently have two routes(home page and sentiment analysis page)
 @app.route("/")
 def home():
-    return render_template("home.html")
+    #If the user is not logged in, Home still work normally
+    #If the user is logged in, Flask loads reminder_enabled and reminder_time and send to home.html as reminder_data
+    reminder_data = None
+    show_reminder = False
+
+    if "user_id" in session:
+        connection = get_database_connection()
+        cursor = connection.cursor(dictionary=True)
+
+        cursor.execute(
+            """
+            SELECT reminder_enabled, reminder_time
+            FROM user_settings
+            WHERE user_id = %s
+            """,
+            (session["user_id"],)
+        )
+
+        reminder_data = cursor.fetchone()
+
+
+
+        if reminder_data and reminder_data["reminder_enabled"] and reminder_data["reminder_time"]:
+            now = datetime.now()
+
+            reminder_time = reminder_data["reminder_time"]
+
+            reminder_datetime = now.replace(
+                hour=reminder_time.seconds // 3600,
+                minute=(reminder_time.seconds // 60) % 60,
+                second=0,
+                microsecond=0
+            )
+
+            reminder_start = reminder_datetime - timedelta(minutes=30)
+
+            if reminder_start <= now <= reminder_datetime:
+                show_reminder = True
+
+        cursor.close()
+        connection.close()
+
+    return render_template(
+        "home.html",
+        reminder_data = reminder_data,
+        show_reminder = show_reminder
+    )
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -757,6 +805,66 @@ def edit_journal_entry(entry_id):
     return render_template(
         "edit_journal.html",
         entry=entry
+    )
+
+#Step 11.2
+#Create URL for settings page
+@app.route("/settings", methods=["GET", "POST"])
+@login_required
+def settings():
+    #Flask display settings file
+    if request.method == "POST":
+        #if checkbox is checked, reminder_enabled will be "on", if not checked, reminder_enabled will be None
+        #Use a ternary operator to convert the checkbox value to 1 (enabled) or 0 (disabled)
+        reminder_enabled = 1 if request.form.get("reminder_enabled") else 0
+        reminder_time = request.form.get("reminder_time")
+
+        connection = get_database_connection()
+        cursor = connection.cursor()
+
+        cursor.execute(
+            """
+            INSERT INTO user_settings (user_id, reminder_enabled, reminder_time)
+            VALUES (%s, %s, %s)
+            ON DUPLICATE KEY UPDATE
+                reminder_enabled = VALUES(reminder_enabled),
+                reminder_time = VALUES(reminder_time)
+            """,
+            (
+                session["user_id"],
+                reminder_enabled,
+                reminder_time
+            )
+        )
+
+        connection.commit()
+
+        cursor.close()
+        connection.close()
+        flash("Reminder preference saved successfully.", "success")
+
+
+    connection = get_database_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    #Load only the user preference for current logged-in user
+    cursor.execute(
+        """
+        SELECT reminder_enabled, reminder_time
+        FROM user_settings
+        WHERE user_id = %s
+        """,
+        (session["user_id"],)
+    )
+
+    settings_data = cursor.fetchone()
+
+    cursor.close()
+    connection.close()
+
+    return render_template(
+        "settings.html",
+        settings_data=settings_data
     )
 
 if __name__ == "__main__":

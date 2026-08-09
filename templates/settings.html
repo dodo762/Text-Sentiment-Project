@@ -1,0 +1,55 @@
+<!--Step 11: Settings Page-->
+<!--Reuse existing navigation bar and overall layout-->
+{% extends "base.html" %}
+
+<!--Change browser tab title to Settings-->
+{% block title %}Settings{% endblock %}
+
+{% block content %}
+<!--page-container and content-card reuse existing page styling-->
+<div class="page-container">
+    <div class="content-card">
+        <h1>Settings</h1>
+
+        <p>
+            Manage your application preferences.
+        </p>
+
+        <!--Step 11.4-->
+        <!--Separate area that style later when build actual reminder preference-->
+        <div class="settings-section">
+            <h2>Reminder Preference</h2>
+
+            <p>
+                Choose whether you would like to receive a daily reminder to use the application. 
+            </p>
+            
+            <!--Form use to let Flask receive user preference-->
+            <form method="POST">
+                <label>
+                    <!--Check user wants reminders on or off-->
+                    <input 
+                        type="checkbox" 
+                        name="reminder_enabled"
+                        {% if settings_data and settings_data.reminder_enabled %}
+                            checked
+                        {% endif %}
+                    >
+                    Enable daily reminder
+                </label>
+
+                <label for="reminder_time">Reminder Time</label>
+                <!--Let user choose the time-->
+                <input
+                    type="time"
+                    id="reminder_time"
+                    name="reminder_time"
+                    value="{% if settings_data and settings_data.reminder_time %}{{ settings_data.reminder_time|string }}{% endif %}"
+                >
+
+                <button type="submit">Save Preference</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
