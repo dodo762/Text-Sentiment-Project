@@ -11,6 +11,18 @@
         <p class="description">
             Review your previous sentiment analysis results.
         </p>
+
+        <!--Check if there are any history records to display the "Clear All History" button-->
+        {% if history_records %}
+            <form
+                action="{{ url_for('clear_history') }}"
+                method="POST"
+            >
+                <button type="submit">
+                    Clear All History
+                </button>
+            </form>
+        {% endif %}
         
         <!--check whether the database returned any records-->
         {% if history_records %}
@@ -51,6 +63,15 @@
                     <small>
                         {{ record.created_at }}
                     </small>
+
+                    <form
+                        action="{{ url_for('delete_history_record', record_id=record.id) }}"
+                        method="POST"
+                    >
+                        <button type="submit">
+                            Delete
+                        </button>
+                    </form>
                 </article>
             {% endfor %}
         {% else %}

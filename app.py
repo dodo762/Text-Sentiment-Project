@@ -546,6 +546,81 @@ def history():
         if connection.is_connected():
             connection.close()
 
+#route to delete individual sentiment history record
+@app.route("/history/delete/<int:record_id>", methods=["POST"])
+@login_required
+def delete_history_record(record_id):
+    connection = get_database_connection()
+    cursor = connection.cursor()
+
+    cursor.execute(
+        """
+        DELETE FROM sentiment_history
+        WHERE id = %s AND user_id = %s
+        """,
+        (record_id, session["user_id"])
+        
+    )
+
+    connection.commit()
+    #how many database rows were actually affected
+    deleted_rows = cursor.rowcount
+
+    cursor.close()
+    connection.close()
+
+    if deleted_rows > 0:
+        flash(
+            "Sentiment history record deleted successfully.",
+            "success"
+        )
+    else:
+        flash(
+            "Sentiment history record not found.",
+            "error"
+        )
+    
+
+    return redirect(url_for("history"))
+
+#add clear all route
+#POST only to avoid accidental deletion by simply open a URL
+@app.route("/history/clear", methods=["POST"])
+@login_required
+def clear_history():
+    connection = get_database_connection()
+    cursor = connection.cursor()
+
+    #clear only logged-in user's history
+    cursor.execute(
+        """
+        DELETE FROM sentiment_history
+        WHERE user_id = %s
+        """,
+        (session["user_id"],)
+    )
+
+    connection.commit()
+
+    #check how many rows were actually deleted
+    deleted_rows = cursor.rowcount
+
+    cursor.close()
+    connection.close()
+
+    if deleted_rows > 0:
+        flash(
+            "All sentiment history records were cleared successfully.",
+            "success"
+        )
+    else:
+        flash(
+            "There are no sentiment history records to clear.",
+            "error"
+        )
+
+    return redirect(url_for("history"))
+
 #Step 6.1: Create temporary dashboard route 
 @app.route("/dashboard")
 @login_required
