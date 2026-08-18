@@ -15,12 +15,72 @@
 
         <div class="reflection-section">
             <h2>Reflection Questions</h2>
-
-            <p>1. What happened today that affected your mood?</p>
-            <p>2. What emotion did you notice most strongly today?</p>
-            <p>3. Was there anything that made you feel better or worse?</p>
-            <p>4. What is one thing you would like to remember from today?</p>
+            <form method="POST">
+                <p>1. What happened today that affected your mood?</p>
+                <textarea
+                    name="answer_1"
+                    rows="4"
+                    placeholder="Write your answer here..."
+                ></textarea>
+                <p>2. What emotion did you notice most strongly today?</p>
+                <textarea
+                    name="answer_2"
+                    rows="4"
+                    placeholder="Write your answer here..."
+                ></textarea>
+                <p>3. Was there anything that made you feel better or worse?</p>
+                <textarea
+                    name="answer_3"
+                    rows="4"
+                    placeholder="Write your answer here..."
+                ></textarea>
+                <p>4. What is one thing you would like to remember from today?</p>
+                <textarea
+                    name="answer_4"
+                    rows="4"
+                    placeholder="Write your answer here..."
+                ></textarea>
+                <button type="submit">
+                    Save Reflection
+                </button>
+            </form>
         </div>
+
+        <!--if saved reflections exist, the section show-->
+        {% if reflection_records %}
+            <div class="reflection-section">
+                <h2>Previous Reflections</h2>
+                <!--loop through current user's reflections-->
+                {% for reflection in reflection_records %}
+                    <div>
+                        <p>
+                            <strong>Date:</strong>
+                            {{ reflection.created_at }}
+                        </p>
+
+                        <p>
+                            <strong>1.</strong>
+                            {{ reflection.answer_1 }}
+                        </p>
+
+                        <p>
+                            <strong>2.</strong>
+                            {{ reflection.answer_2 }}
+                        </p>
+
+                        <p>
+                            <strong>3.</strong>
+                            {{ reflection.answer_3 }}
+                        </p>
+
+                        <p>
+                            <strong>4.</strong>
+                            {{ reflection.answer_4 }}
+                        </p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
     </div>
 </div>
 

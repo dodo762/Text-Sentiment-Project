@@ -722,10 +722,77 @@ def breathing():
     return render_template("breathing.html")
 
 #Step 9.2 Add daily reflection route
-@app.route("/reflect")
+@app.route("/reflect", methods=["GET", "POST"])
 @login_required
 def reflect():
-    return render_template("reflect.html")
+    if request.method == "POST":
+        #read each textarea
+        answer_1 = request.form.get("answer_1", "").strip()
+        answer_2 = request.form.get("answer_2", "").strip()
+        answer_3 = request.form.get("answer_3", "").strip()
+        answer_4 = request.form.get("answer_4", "").strip()
+        if not answer_1 or not answer_2 or not answer_3 or not answer_4:
+            flash(
+                "Please answer all reflection questions before saving.",
+                "error"
+            )
+            return render_template("reflect.html")
+        connection = get_database_connection()
+        cursor = connection.cursor()
+
+        cursor.execute(
+            """
+            INSERT INTO daily_reflections (
+                user_id,
+                answer_1,
+                answer_2,
+                answer_3,
+                answer_4
+            )
+            VALUES (%s, %s, %s, %s, %s)
+            """,
+            (
+                session["user_id"],
+                answer_1,
+                answer_2,
+                answer_3,
+                answer_4
+            )
+        )
+
+        connection.commit()
+
+        cursor.close()
+        connection.close()
+
+        flash(
+            "Daily reflection saved successfully.",
+            "success"
+        )
+
+    connection = get_database_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    #get saved reflections from daily_reflections table
+    #only loads the current logged-in user's records
+    #newest reflections appear first
+    cursor.execute(
+        """
+        SELECT id, answer_1, answer_2, answer_3, answer_4, created_at
+        FROM daily_reflections
+        WHERE user_id = %s
+        ORDER BY created_at DESC
+        """,
+        (session["user_id"],)
+    )
+    #store display data in reflection records
+    reflection_records = cursor.fetchall()
+
+    cursor.close()
+    connection.close()   
+
+    #pass it through render template so that reflect.html can see the variable
+    return render_template("reflect.html", reflection_records=reflection_records)
 
 #Step 10.3 Add journal route
 @app.route("/journal", methods=["GET", "POST"])
