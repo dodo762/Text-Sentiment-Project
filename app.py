@@ -794,6 +794,39 @@ def reflect():
     #pass it through render template so that reflect.html can see the variable
     return render_template("reflect.html", reflection_records=reflection_records)
 
+@app.route("/reflect/delete/<int:reflection_id>", methods=["POST"])
+@login_required
+def delete_reflection(reflection_id): 
+    connection = get_database_connection()
+    cursor = connection.cursor()
+    #user only can delete their own reflection
+    cursor.execute(
+        """
+        DELETE FROM daily_reflections
+        WHERE id = %s AND user_id = %s
+        """,
+        (reflection_id, session["user_id"])
+    )
+    #check if the record has been deleted successfully
+    deleted_rows = cursor.rowcount
+    #save the deletion into MySQL
+    connection.commit()
+    cursor.close()
+    #close database connection after delete query
+    connection.close()
+    if deleted_rows > 0:
+        flash(
+            "Daily reflection deleted successfully.",
+            "success"
+        )
+    else:
+        flash(
+            "Daily reflection not found.",
+            "error"
+        )
+    #return back to reflection page after deleting
+    return redirect(url_for("reflect"))
+
 #Step 10.3 Add journal route
 @app.route("/journal", methods=["GET", "POST"])
 @login_required

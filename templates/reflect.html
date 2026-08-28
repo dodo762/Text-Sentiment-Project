@@ -77,6 +77,12 @@
                             <strong>4.</strong>
                             {{ reflection.answer_4 }}
                         </p>
+                        <!--Create one delete button for each saved reflection & send reflection's id to flask route-->
+                        <form method = "POST" action="{{ url_for('delete_reflection', reflection_id=reflection.id) }}">
+                            <button type="submit">
+                                Delete
+                            </button>
+                        </form>
                     </div>
                 {% endfor %}
             </div>
